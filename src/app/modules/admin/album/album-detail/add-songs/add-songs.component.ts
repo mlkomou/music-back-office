@@ -10,8 +10,7 @@ import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Artisite } from '../../modal/artiste';
-import { Song } from '../../modal/song';
+
 
 
 @Component({
@@ -22,7 +21,7 @@ import { Song } from '../../modal/song';
 export class AddSongsComponent implements OnInit {
     imageChangedEvent: any = '';
     croppedImage: any = '';
-    song: Song = new Song();
+    song;
     categories: any[];
     currSong: HTMLAudioElement;
     apiUrl = environment.apiUrl;
@@ -37,7 +36,7 @@ export class AddSongsComponent implements OnInit {
     photo;
     imageUrl;
     validatePhoto: boolean = true;
-    artiste: Artisite = new Artisite();
+    artiste;
     artistes;
     songFile;
     songUrl;
@@ -64,6 +63,7 @@ export class AddSongsComponent implements OnInit {
 
         }
         else {
+            this.data = _data.data
             this.artisteForm = this.createArtisteForm();
             this.dialogTitle = 'Ajouté';
         }
@@ -181,17 +181,7 @@ export class AddSongsComponent implements OnInit {
     }
 
     saveSong() {
-        //this.songUser.utilisateur = this.utilisateur;
-        if(typeof(this.myControl.value) === 'object' && this.myControl.value != null){
-            console.log("object"+ this.myControl.value.id);
-            this.artisteId = this.myControl.value.id
-            this.artisteForm.patchValue({artiste : this.myControl.value})
-          }
 
-          if (typeof(this.myControl.value)==='string') {
-            this.toastr.warning("Si l'artiste n'existe pas dans la liste créer la d'abord")
-            return
-          }
         this.importService.publishSong(this.artisteForm.value, this.artisteId, this.songFile, this.photo).subscribe((res: any) => {
             if (res.type === HttpEventType.Response) {
 
@@ -203,16 +193,7 @@ export class AddSongsComponent implements OnInit {
     }
 
     editSong() {
-        if(typeof(this.myControl.value) === 'object' && this.myControl.value != null){
-            console.log("object"+ this.myControl.value.id);
-            this.artisteId = this.myControl.value.id
-            this.artisteForm.patchValue({artiste : this.myControl.value})
-          }
 
-          if (typeof(this.myControl.value)==='string') {
-            this.toastr.warning("Si l'artiste n'existe pas dans la liste créer la d'abord")
-            return
-          }
         this.importService.editSong(this.artisteForm.value, this.imageFile).subscribe((res: any) => {
             if (res.type === HttpEventType.Response) {
                 console.log(res);
@@ -229,12 +210,11 @@ export class AddSongsComponent implements OnInit {
         return this._formBuilder.group({
             titre: [''],
             sous_titre: [''],
-            img: [''],
+            img: [this.data.img],
             path: [''],
-            visibilite: true,
+            visibilite: this.data.visibilite,
             categorie: [''],
-            artiste: [''],
-            album: null
+            artiste: [this.data.artiste],
         });
     }
     createArtisteEditForm(): FormGroup {

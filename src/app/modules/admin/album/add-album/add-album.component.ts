@@ -1,13 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AlbumService } from 'app/modules/services/album.service';
+import { ArtisteService } from 'app/modules/services/artiste.service';
 import { ImportSongService } from 'app/modules/services/import-song.service';
 import { environment } from 'environments/environment';
 import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
-//import { ContactsContactFormDialogComponent } from '../../contacts/contact-form/contact-form.component';
-//import { Contact } from '../../contacts/contact.model';
+import { ToastrService } from 'ngx-toastr';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { Album } from '../../modal/album';
 import { Artisite } from '../../modal/artiste';
 import { Song } from '../../modal/song';
@@ -50,18 +52,13 @@ export class AddAlbumComponent {
     imageCropped(event: ImageCroppedEvent) {
         this.croppedImage = event.base64;
         this.imageBlob = this.dataURLtoBlob(event.base64);
-        console.log("image blob", this.imageBlob);
         this.imageFile = this.blobToFile(this.imageBlob, String(new Date().getTime()));
-
     }
+
     public blobToFile = (theBlob: Blob, fileName: string): File => {
         var b: any = theBlob;
-        console.log("blllllob", b);
-
-        //A Blob() is almost a File() - it's just missing the two properties below which we will add
         b.lastModifiedDate = new Date();
         b.name = fileName;
-        //Cast to a File() type
         return <File>theBlob;
     }
     imageLoaded(image: LoadedImage) {
@@ -80,31 +77,27 @@ export class AddAlbumComponent {
     dialogTitle: string;
     photo;
     imageUrl;
-    validatePhoto: boolean = false;
+    validatePhoto: boolean = true;
     artiste: Artisite = new Artisite();
     songFile;
     songUrl;
     data;
+    myControl = new FormControl();
+    filteredOptions: Observable<any>;
+    artistes;
 
-    /**
-     * Constructor
-     *
-     * @param {MatDialogRef<ContactsContactFormDialogComponent>} matDialogRef
-     * @param _data
-     * @param {FormBuilder} _formBuilder
-     */
     constructor(
         public matDialogRef: MatDialogRef<AddAlbumComponent>,
         @Inject(MAT_DIALOG_DATA) private _data: any,
         private _formBuilder: FormBuilder,
         private importService: ImportSongService,
         private albumService : AlbumService,
+        private toastr : ToastrService,
+        private artisteService : ArtisteService,
         private domSanitizer: DomSanitizer
     ) {
         this.stopMultiplePlay();
-        // Set the defaults
         this.action = _data.action;
-        console.log(_data.data);
 
         if (this.action === 'edit') {
             this.dialogTitle = 'Modifié';
@@ -119,6 +112,7 @@ export class AddAlbumComponent {
         }
 
         this.getCategorie();
+        this.getArtiste();
     }
 
     stopMultiplePlay() {
@@ -130,6 +124,16 @@ export class AddAlbumComponent {
                 }
             }
         }, true);
+    }
+    getArtiste(){
+        this.artisteService.getArtiste().subscribe((res) => {
+            this.artistes = res?.data
+            this.filteredOptions = this.myControl.valueChanges
+            .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.name),
+            map(name => name ? this._filter(name) : this.artistes.slice()))
+            })
     }
 
     getCategorie() {
@@ -191,6 +195,15 @@ export class AddAlbumComponent {
         this.songAlbum.splice(index, 1);
     }
 
+    private _filter(value) {
+        const filterValue = value.toLowerCase();
+        return this.artistes.filter(option => option.nom.toLowerCase().includes(filterValue));
+      }
+
+    displayFn(artiste): string {
+        return artiste && artiste.nom ? artiste.nom : '';
+    }
+
     saveAlbum() {
 
         console.log({
@@ -200,24 +213,41 @@ export class AddAlbumComponent {
             songToSave: this.songToSave
         });
 
+        if(typeof(this.myControl.value) === 'object' && this.myControl.value != null){
+            console.log(this.myControl.value);
 
-        this.importService.saveAlbum(this.photo, this.songFiles, this.albumForm.value, this.songToSave).subscribe((res: any) => {
+            this.albumForm.patchValue({artiste : this.myControl.value})
+          }
+
+          if (typeof(this.myControl.value)==='string') {
+            this.toastr.warning("Si l'artiste n'existe pas dans la liste créer le d'abord")
+            return
+          }
+        this.importService.saveAlbum(this.photo, this.albumForm.value).subscribe((res: any) => {
             console.log(res);
-            this.matDialogRef.close();
+            this.matDialogRef.close(res?.response);
 
         }, (err) => {
             console.log(err);
 
         })
     }
-    editAlbum(id){
-        this.albumService.UpdateAlbum(this.albumForm, this.photo).subscribe((res) => {
-            console.log(res);
+    editAlbum(){
+        if(typeof(this.myControl.value) === 'object' && this.myControl.value != null){
+            this.albumForm.patchValue({artiste : this.myControl.value})
+          }
 
+          if (typeof(this.myControl.value)==='string') {
+            this.toastr.warning("Si l'artiste n'existe pas dans la liste créer le d'abord")
+            return
+          }
+        this.albumService.UpdateAlbum(this.albumForm, this.photo).subscribe((res) => {
+            this.matDialogRef.close(res?.response);
         })
     }
 
     createAlbumForm(): FormGroup {
+
         return this._formBuilder.group({
             nom: [''],
             img: [''],
@@ -229,6 +259,8 @@ export class AddAlbumComponent {
     }
     EditAlbumForm(): FormGroup {
         this.croppedImage = this.apiUrl + 'songs/image/' + this.data?.img
+        this.myControl.patchValue(this.data.artiste)
+
         return this._formBuilder.group({
             id:[this.data.id],
             nom: [this.data.nom],

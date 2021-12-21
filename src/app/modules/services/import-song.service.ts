@@ -70,10 +70,10 @@ export class ImportSongService {
       return this.http.post(this.songApiUrl + 'artistes/create', form);
   }
 
-  pblishSong(song: Song, utilisateur: Utilisateur, songFile, photo): Observable<HttpEvent<any>> {
+  publishSong(song: Song, artiste, songFile, photo): Observable<HttpEvent<any>> {
     let form = new FormData();
     form.append('song', JSON.stringify(song));
-    form.append('user', JSON.stringify(utilisateur));
+    form.append('user', JSON.stringify(artiste));
     form.append('photo', photo);
     form.append('songFile', songFile);
 
@@ -111,15 +111,15 @@ export class ImportSongService {
     return this.http.get(this.songApiUrl + 'categorie');
   }
 
-  saveAlbum(imgAlbum, songFiles: File[], albumString: Album, songString: Song[]): Observable<any> {
+  saveAlbum(imgAlbum,  albumString: Album): Observable<any> {
       let form = new FormData();
       form.append('imgAlbum', imgAlbum);
-      songFiles.forEach(fileToSave => {
+      /* songFiles.forEach(fileToSave => {
           form.append('songFiles', fileToSave);
-      });
+      }); */
     //   form.append('songFiles', JSON.stringify(songFiles));
       form.append('albumString', JSON.stringify(albumString));
-      form.append('songString', JSON.stringify(songString));
+      //form.append('songString', JSON.stringify(songString));
       return this.http.post(this.songApiUrl + 'albums/create', form);
   }
 

@@ -13,7 +13,7 @@ import { DeleteConfirmationComponent } from 'app/modules/widgets/delete-confirma
 //import { FuseUtils } from '@fuse/utils';
 import { environment } from 'environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { AddSongsComponent } from '../../musique/add-songs/add-songs.component';
+import { AddSongsComponent } from './add-songs/add-songs.component';
 
 @Component({
   selector: 'app-albumdetail',
@@ -46,7 +46,6 @@ export class AlbumdetailComponent implements OnInit {
         private router: Router,
         private _location: Location
     ) {
-        // Set the private defaults
         if(!this.router.getCurrentNavigation()?.extras?.state){
             this._location.back()
         }
@@ -76,7 +75,8 @@ export class AlbumdetailComponent implements OnInit {
             let dialog = this.dialogRef.open(AddSongsComponent, {
                 panelClass: 'contact-form-dialog',
                 data: {
-                    action: 'new'
+                    action: 'new',
+                    data: this.data
                 },
                 height: '80%',
                 width: '100vw',

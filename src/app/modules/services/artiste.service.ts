@@ -20,9 +20,9 @@ songApiUrl = environment.apiUrl;
     }
   UpdateArtiste(data, photo): Observable<any> {
     let form = new FormData();
-    form.append('imgAlbum', photo);
-    form.append('artisteString', JSON.stringify(data));
-    return this.http.put(this.songApiUrl + 'artiste/edit/', form);
+    form.append('photo', photo);
+    form.append('artiste', JSON.stringify(data));
+    return this.http.put(this.songApiUrl + 'artiste/edit', form);
     }
 
   deleteArtiste(id): Observable<any> {

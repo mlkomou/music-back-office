@@ -1,4 +1,3 @@
-import { DataSource } from '@angular/cdk/collections';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,8 +12,7 @@ import { DeleteConfirmationComponent } from 'app/modules/widgets/delete-confirma
 //import { FuseUtils } from '@fuse/utils';
 import { environment } from 'environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, fromEvent, merge, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
+import {  Subject } from 'rxjs';
 import { AddAlbumComponent } from '../album/add-album/add-album.component';
 
 @Component({
@@ -133,7 +131,6 @@ export class AlbumComponent implements OnInit {
                         (res) => {
                             this.dataAlbum.splice(i, 1)
                             this.albums.data = this.dataAlbum
-                            //this.musics = new MatTableDataSource(this.data)
                             this.toastr.success("La music a été modifié avec succès")
                         }
                     )

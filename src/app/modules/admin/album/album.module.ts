@@ -36,9 +36,11 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { DeleteConfirmationComponent } from 'app/modules/widgets/delete-confirmation/delete-confirmation.component';
 import { AlbumComponent } from './album.component';
 import { AlbumdetailComponent } from './album-detail/albumdetail.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { AddSongsComponent } from './album-detail/add-songs/add-songs.component';
 
 @NgModule({
-  declarations: [AddAlbumComponent, AlbumComponent, AlbumdetailComponent],
+  declarations: [AddAlbumComponent, AlbumComponent, AlbumdetailComponent, AddSongsComponent],
   imports: [
     CommonModule,
     AlbumRoutingModule,
@@ -64,6 +66,7 @@ import { AlbumdetailComponent } from './album-detail/albumdetail.component';
     MatButtonModule,
     MatCheckboxModule,
     MatDatepickerModule,
+    MatAutocompleteModule,
     MatMenuModule
   ],
   providers : [AlbumService, ToastrService, ImportSongService]

@@ -61,9 +61,9 @@
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="artiste">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header>Titre</mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Artiste</mat-header-cell>
                             <mat-cell *matCellDef="let albums">
-                                <p class="text-truncate">{{albums.artiste}}</p>
+                                <p class="text-truncate">{{albums.artiste.nom}}</p>
                             </mat-cell>
                         </ng-container>
 
@@ -84,7 +84,7 @@
                                 <button mat-icon-button	 color="primary" (click)="addAlbum('edit',albums, i)">
                                     <mat-icon>edit</mat-icon>
                                 </button>
-                                <button mat-icon-button	 color="warn" (click)="DeleteAlbum(albums.id, i)">
+                                <button mat-icon-button	 color="warn" (click)="deleteAlbum(albums.id, i)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </mat-cell>

@@ -61,13 +61,13 @@
                             <ng-container matColumnDef="nom">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header>Nom</mat-header-cell>
                                 <mat-cell *matCellDef="let element">
-                                    <p class="text-truncate">{{element.titre}}</p>
+                                    <p class="text-truncate">{{element.nom}}</p>
                                 </mat-cell>
                             </ng-container>
                             <ng-container matColumnDef="biographie">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header>Biographie</mat-header-cell>
                                 <mat-cell *matCellDef="let element">
-                                    <p class="text-truncate">{{element.artiste}}</p>
+                                    <p class="text-truncate">{{element.biographie}}</p>
                                 </mat-cell>
                             </ng-container>
 
@@ -77,7 +77,7 @@
                                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                                 <mat-cell *matCellDef="let element">
                                     <img class="product-image"
-                                    [src]="elementUrl+'elements/image/'+element.img"/>
+                                    [src]="apiUrl+'artiste/image/'+element.photo"/>
                                 </mat-cell>
                             </ng-container>
 

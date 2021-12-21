@@ -22,8 +22,8 @@ import { AddArtisteComponent } from './add-artiste/add-artiste.component';
 export class ArtisteComponent implements OnInit {
 
 
-    displayedColumns = ['img', 'biographie', 'nom','action'];
-    songUrl = environment.apiUrl;
+    displayedColumns = ['img', 'nom', 'biographie', 'action'];
+    apiUrl = environment.apiUrl;
 
     @ViewChild('paginator', { static: true }) paginatorSong: MatPaginator;
 
@@ -36,11 +36,10 @@ export class ArtisteComponent implements OnInit {
     artiste = new MatTableDataSource<any>();
     constructor(private artisteService: ArtisteService,
         private dialogRef: MatDialog,
-        private service: ImportSongService,
-        private AlbumService: AlbumService,
         private toastr: ToastrService) { }
 
     ngOnInit(): void {
+        this.getArtiste()
     }
 
     getArtiste(){
@@ -108,18 +107,18 @@ export class ArtisteComponent implements OnInit {
         dialog.afterClosed()
             .subscribe((response) => {
                 if (response) {
-                    this.service.deleteSong(id).subscribe(
+                    this.artisteService.deleteArtiste(id).subscribe(
                         (res) => {
                             this.dataArtiste.splice(i, 1)
                             this.artiste.data = this.dataArtiste
                             //this.musics = new MatTableDataSource(this.data)
-                            this.toastr.success("La music a été modifié avec succès")
+                            this.toastr.success("Artiste supprimé")
                         }
                     )
 
                 }
                 if (response == false) {
-                   // this.toastr.error('Désolé une erreur est survenue.')
+                   this.toastr.error('Désolé une erreur est survenue.')
                 }
             });
     }

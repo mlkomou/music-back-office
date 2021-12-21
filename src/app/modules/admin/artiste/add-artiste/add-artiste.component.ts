@@ -37,7 +37,7 @@ export class AddArtisteComponent implements OnInit {
     dialogTitle: string;
     photo;
     imageUrl;
-    validatePhoto: boolean = false;
+    validatePhoto: boolean = true;
     artiste: Artisite = new Artisite();
     songFile;
     songUrl;
@@ -140,18 +140,16 @@ export class AddArtisteComponent implements OnInit {
 
 
         this.artisteService.createArtiste(this.photo, this.form.value).subscribe((res: any) => {
-            console.log(res);
-            this.matDialogRef.close();
-
+            this.matDialogRef.close(res.response);
         }, (err) => {
             console.log(err);
 
         })
     }
-    editArtiste(id){
-        this.artisteService.UpdateArtiste(this.form, this.photo).subscribe((res) => {
+    edit(){
+        this.artisteService.UpdateArtiste(this.form.value, this.photo).subscribe((res) => {
             console.log(res);
-
+            this.matDialogRef.close(res.response);
         })
     }
 
@@ -165,7 +163,7 @@ export class AddArtisteComponent implements OnInit {
     }
 
     EditArtisteForm(): FormGroup {
-        this.croppedImage = this.apiUrl + 'artiste/image/' + this.data?.img
+        this.croppedImage = this.apiUrl + 'artiste/image/' + this.data?.photo
         return this._formBuilder.group({
             id:[this.data.id],
             nom: [this.data.nom],

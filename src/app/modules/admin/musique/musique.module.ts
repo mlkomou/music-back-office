@@ -34,6 +34,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { AlbumService } from 'app/modules/services/album.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { DeleteConfirmationComponent } from 'app/modules/widgets/delete-confirmation/delete-confirmation.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 const routes: Routes = [
     {
@@ -101,6 +102,7 @@ const routes: Routes = [
     MatCheckboxModule,
     MatDatepickerModule,
     MatMenuModule,
+    MatAutocompleteModule,
     MatDialogModule
 
   ],

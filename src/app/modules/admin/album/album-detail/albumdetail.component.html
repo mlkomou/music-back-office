@@ -22,7 +22,7 @@
                                 audiotrack
                             </mat-icon>
                             <span class="logo-text h1" >
-                                {{data?.nom}} par {{data?.artiste}}
+                                {{data?.nom}} par {{data?.artiste.nom}}
                             </span>
                         </div>
                         <!-- / APP TITLE -->
@@ -65,7 +65,7 @@
                             <ng-container matColumnDef="artiste">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header>Artiste</mat-header-cell>
                                 <mat-cell *matCellDef="let song">
-                                    <p class="text-truncate">{{song.artiste}}</p>
+                                    <p class="text-truncate">{{song.artiste.name}}</p>
                                 </mat-cell>
                             </ng-container>
 
@@ -81,7 +81,6 @@
 
 
 
-                            <!-- Price Column -->
                             <ng-container matColumnDef="like">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>like</mat-header-cell>
                                 <mat-cell *matCellDef="let song" fxHide fxShow.gt-xs>
@@ -114,9 +113,7 @@
 
 
                     </div>
-                    <!-- / CONTENT CARD -->
                 </div>
-                <!-- / CENTER -->
             </div>
 
         </div>
