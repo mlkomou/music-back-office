@@ -1,7 +1,7 @@
 
 
 <mat-tab-group  class="mt-4">
-    <mat-tab label="Artiste">
+    <mat-tab label="Songs">
         <div>
             <div id="products" class="page-layout carded fullwidth inner-scroll">
 
@@ -24,7 +24,7 @@
                                 audiotrack
                             </mat-icon>
                             <span class="logo-text h1" >
-                                elements
+                                Songs
                             </span>
                         </div>
                         APP TITLE -->
@@ -33,16 +33,16 @@
                         <!-- <div class="search-wrapper mx-32 mx-md-0">
                             <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
                                 <mat-icon>search</mat-icon>
-                                <input #filter placeholder="Rechercher un element">
+                                <input #filter placeholder="Rechercher un song">
                             </div>
                         </div> -->
                         <!-- / SEARCH -->
 
                         <!-- ADD BUTTON -->
                         <button mat-raised-button
-                        (click)="add('new', null, null)"
+                        (click)="addSong('new', null, null)"
                                 class="add-product-button fuse-white mt-8 mb-4 mt-md-0">
-                            <span>AJOUTER UN ARTISTE</span>
+                            <span>AJOUTER NOUVEAU SONG</span>
                         </button>
                         <!-- / ADD BUTTON -->
 
@@ -53,21 +53,21 @@
                     <div class="content-card">
 
                         <mat-table class="products-table"
-                                   #table [dataSource]="artiste"
+                                   #table [dataSource]="songs"
                                    matSort
                                    fusePerfectScrollbar>
 
                             <!-- ID Column -->
-                            <ng-container matColumnDef="nom">
-                                <mat-header-cell *matHeaderCellDef mat-sort-header>Nom</mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    <p class="text-truncate">{{element.titre}}</p>
+                            <ng-container matColumnDef="titre">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>Titre</mat-header-cell>
+                                <mat-cell *matCellDef="let song">
+                                    <p class="text-truncate">{{song.titre}}</p>
                                 </mat-cell>
                             </ng-container>
-                            <ng-container matColumnDef="biographie">
-                                <mat-header-cell *matHeaderCellDef mat-sort-header>Biographie</mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    <p class="text-truncate">{{element.artiste}}</p>
+                            <ng-container matColumnDef="artiste">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>Artiste</mat-header-cell>
+                                <mat-cell *matCellDef="let song">
+                                    <p class="text-truncate">{{song.artiste}}</p>
                                 </mat-cell>
                             </ng-container>
 
@@ -75,36 +75,63 @@
                             <!-- Image Column -->
                             <ng-container matColumnDef="img">
                                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                                <mat-cell *matCellDef="let element">
+                                <mat-cell *matCellDef="let song">
                                     <img class="product-image"
-                                    [src]="elementUrl+'elements/image/'+element.img"/>
+                                    [src]="songUrl+'songs/image/'+song.img"/>
                                 </mat-cell>
                             </ng-container>
 
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="prix">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>Prix</mat-header-cell>
+                                <mat-cell *matCellDef="let song">
+                                    <p class="text-truncate">{{song.prix}} FCFA</p>
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Category Column -->
+                            <ng-container matColumnDef="categorie">
+                                <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Categorie</mat-header-cell>
+                                <mat-cell *matCellDef="let song" fxHide fxShow.gt-md>
+                                    <p class="category text-truncate">
+                                        {{song?.categorie?.nom}}
+                                    </p>
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Price Column -->
+                            <ng-container matColumnDef="like">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>like</mat-header-cell>
+                                <mat-cell *matCellDef="let song" fxHide fxShow.gt-xs>
+                                    <p class="price text-truncate">
+                                        {{song.likes.length}}
+                                    </p>
+                                </mat-cell>
+                            </ng-container>
                             <ng-container matColumnDef="action">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Action</mat-header-cell>
-                                <mat-cell *matCellDef="let element; let i = index" fxHide fxShow.gt-xs>
+                                <mat-cell *matCellDef="let song; let i = index" fxHide fxShow.gt-xs>
 
-                                    <button mat-icon-button	 color="primary" class="" (click)="add('edit',element, i)">
+                                    <button mat-icon-button	 color="primary" class="" (click)="addSong('edit',song, i)">
                                         <mat-icon>remove_red_eye</mat-icon>
                                     </button>
-                                    <button mat-icon-button	 color="accent" (click)="delete(element.id, i)">
+                                    <button mat-icon-button	 color="accent" (click)="DeleteSong(song.id, i)">
                                         <mat-icon>delete</mat-icon>
                                     </button>
                                 </mat-cell>
                             </ng-container>
 
-                            <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                            <mat-header-row *matHeaderRowDef="displayedSongColumns; sticky:true"></mat-header-row>
 
-                            <mat-row *matRowDef="let element; columns: displayedColumns;"
+                            <mat-row *matRowDef="let song; columns: displayedSongColumns;"
                                      class="product"
                                      matRipple>
                             </mat-row>
 
                         </mat-table>
 
-                        <mat-paginator #paginator
-                                       [length]="artiste.data.length"
+                        <mat-paginator #paginatorSong
+                                       [length]="songs.data.length"
                                        [pageIndex]="0"
                                        [pageSize]="10"
                                        [pageSizeOptions]="[5, 10, 25, 100]">

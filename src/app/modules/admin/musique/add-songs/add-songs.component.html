@@ -1,0 +1,140 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">{{dialogTitle}} le sons</span>
+            <button mat-icon-button (click)="matDialogRef.close()" aria-label="Close dialog">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+
+        <mat-toolbar-row (click)="importPhoto()" class="toolbar-bottom py-16" fxLayout="column" fxLayoutAlign="center center">
+            <img *ngIf="croppedImage" [src]="croppedImage" class="avatar contact-avatar huge m-0 w-28"/>
+            <img *ngIf="!croppedImage" [src]="'assets/images/avatars/female-01.jpg'" class="avatar contact-avatar huge m-0 w-28"/>
+<!--             <div class="contact-name mt-8">{{contact.name}} {{contact.lastName}}</div>
+ -->        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div class="p-4 pb-0 m-0" >
+
+        <form [formGroup]="artisteForm">
+           <button (click)="validePhoto()" *ngIf="validatePhoto == false && photo" style="background-color: green;" mat-mini-fab color="primary">
+               <mat-icon>checkbox</mat-icon>
+           </button>
+
+            <div align="center" *ngIf="validatePhoto == false">
+                <image-cropper
+            class="max-w-52"
+                [imageFile]="photo"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="3 / 3"
+                [format]="'jpeg'"
+                [imageQuality]="20"
+                (imageCropped)="imageCropped($event)"
+                (cropperReady)="cropperReady()"
+                (loadImageFailed)="loadImageFailed()"
+            ></image-cropper>
+            </div>
+
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Titre song</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="titre" formControlName="titre" matInput required>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Artiste</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="artiste" formControlName="artiste" matInput required>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Sous titre song</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="sous_titre" formControlName="sous_titre" matInput>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Visibilité</mat-label>
+                    <input name="biographie"  [readonly]="true" matInput>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <mat-radio-group (change)="radioChange($event)" formArrayName="visibilite" aria-label="Select an option">
+                        <mat-radio-button [value]="true">Public</mat-radio-button>
+                        <mat-radio-button style="margin-left: 30px;" [value]="false">Privé</mat-radio-button>
+                      </mat-radio-group>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" *ngIf="artisteForm.value.visibilite == false" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Prix song en FCFA</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input type="number" name="prix" formControlName="prix" matInput>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Categorie</mat-label>
+                    <mat-select (selectionChange)="getCatValue($event)" formControlName="categorie">
+                      <mat-option [value]="cat" *ngFor="let cat of categories">{{cat.nom}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+
+            <div *ngIf="action !== 'edit'" class="songBtn">
+                <button (click)="importSong()" mat-flat-button color="primary">
+                    Importer le song
+                </button>
+            </div>
+
+            <div *ngIf="songUrl" class="songUser">
+                <audio controls>
+                    <source [src]="songUrl" type="audio/mpeg">
+                  </audio>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+
+        <!-- <button *ngIf="action === 'edit'"
+                mat-button
+                class="mr-8"
+                (click)="matDialogRef.close(['delete',contactForm])"
+                aria-label="Delete"
+                matTooltip="Delete">
+            DELETE
+        </button> -->
+
+        <button *ngIf="action !== 'edit'"
+                mat-button
+                class="save-button"
+                (click)="saveArtiste()"
+                color="primary"
+                [disabled]="artisteForm.invalid"
+                aria-label="SAVE">
+            AJOUTER
+        </button>
+
+        <button *ngIf="action === 'edit'"
+                mat-button
+                color="warn"
+                class="save-button"
+                (click)="editSong()"
+                [disabled]="artisteForm.invalid"
+                aria-label="SAVE">
+            Modifier
+        </button>
+
+    </div>
+</div>

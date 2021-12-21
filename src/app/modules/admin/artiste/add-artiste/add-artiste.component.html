@@ -1,0 +1,72 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">Nouvel Artiste</span>
+            <button mat-icon-button (click)="matDialogRef.close()" aria-label="Close dialog">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+
+        <mat-toolbar-row (click)="importPhoto()" class="toolbar-bottom py-16" fxLayout="column" fxLayoutAlign="center center">
+            <img *ngIf="croppedImage" [src]="croppedImage" class="w-28  avatar contact-avatar huge m-0"/>
+            <img *ngIf="!croppedImage" [src]="'assets/images/avatar/male-01.jpg'" class="w-28  avatar contact-avatar huge m-0"/>
+<!--             <div class="contact-name mt-8">{{contact.name}} {{contact.lastName}}</div>
+ -->        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div  class=" pb-0 m-0" >
+
+        <form [formGroup]="form">
+           <button (click)="validePhoto()" *ngIf="validatePhoto == false && photo" style="background-color: green;" mat-mini-fab color="primary">
+               <mat-icon>checkbox</mat-icon>
+           </button>
+
+            <div align="center">
+                <image-cropper
+            style="width: 200px;"
+            *ngIf="validatePhoto == false"
+                [imageFile]="photo"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="3 / 3"
+                [format]="'jpeg'"
+                [imageQuality]="20"
+                (imageCropped)="imageCropped($event)"
+                (cropperReady)="cropperReady()"
+                (loadImageFailed)="loadImageFailed()"
+            ></image-cropper>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Nom de l'artiste</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="nom" formControlName="nom" matInput required>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Biographie</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="artiste" formControlName="biographie" matInput required>
+                </mat-form-field>
+            </div>
+        </form>
+
+    </div>
+
+    <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+
+
+        <button
+                mat-button
+                class="save-button"
+                (click)="save()"
+                aria-label="SAVE">
+            AJOUTER
+        </button>
+
+
+
+    </div>
+</div>

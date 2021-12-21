@@ -1,0 +1,116 @@
+<div class="w-full p-3">
+    <div>
+        <div id="products" class="page-layout carded fullwidth inner-scroll">
+
+            <!-- TOP BACKGROUND -->
+            <div class="top-bg accent"></div>
+            <!-- / TOP BACKGROUND -->
+
+            <!-- CENTER -->
+            <div class="center">
+
+                <!-- HEADER -->
+                <div class="header accent"
+                     fxLayout="column" fxLayoutAlign="center center"
+                     fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-between center">
+
+                    <!-- APP TITLE -->
+                    <div class="logo mb-md-0"
+                         fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon class="logo-icon s-32 mr-4" >
+                            library_music
+                        </mat-icon>
+                        <span class="logo-text h1" >
+                            Albums
+                        </span>
+                    </div>
+                    <!-- / APP TITLE -->
+
+                    <!-- SEARCH -->
+                    <!-- <div class="search-wrapper mx-32 mx-md-0">
+                        <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                            <mat-icon>search</mat-icon>
+                            <input #filter placeholder="Rechercher un song">
+                        </div>
+                    </div> -->
+                    <!-- / SEARCH -->
+
+                    <!-- ADD BUTTON -->
+                    <button mat-raised-button
+                    (click)="addAlbum('new',null,null)"
+                            class="add-product-button fuse-white mt-8 mb-4 mt-md-0">
+                        <span>AJOUTER NOUVEL ALBULM</span>
+                    </button>
+                    <!-- / ADD BUTTON -->
+
+                </div>
+                <!-- / HEADER -->
+
+                <!-- CONTENT CARD -->
+                <div class="content-card">
+
+                    <mat-table class="products-table"
+                               #table [dataSource]="albums"
+                               matSort
+                               fusePerfectScrollbar>
+
+                        <ng-container matColumnDef="titre">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Titre</mat-header-cell>
+                            <mat-cell *matCellDef="let albums">
+                                <p class="text-truncate">{{albums.nom}}</p>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="artiste">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Titre</mat-header-cell>
+                            <mat-cell *matCellDef="let albums">
+                                <p class="text-truncate">{{albums.artiste}}</p>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="img">
+                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                            <mat-cell *matCellDef="let albums">
+                                <img class="product-image"
+                                [src]="songUrl+'songs/image/'+albums.img"/>
+                            </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="action">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Action</mat-header-cell>
+                            <mat-cell *matCellDef="let albums; let i = index" fxHide fxShow.gt-xs>
+                                <button mat-icon-button	 color="primary" class="" (click)="go(albums)">
+                                    <mat-icon>remove_red_eye</mat-icon>
+                                </button>
+                                <button mat-icon-button	 color="primary" (click)="addAlbum('edit',albums, i)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button	 color="warn" (click)="DeleteAlbum(albums.id, i)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="displayedAlbumColumns; sticky:true"></mat-header-row>
+
+                        <mat-row *matRowDef="let albums; columns: displayedAlbumColumns;"
+                                 class="product"
+                                 matRipple>
+                        </mat-row>
+
+                    </mat-table>
+
+                    <mat-paginator #paginatorAlbum
+                                   [length]="albums.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="10"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+
+                </div>
+                <!-- / CONTENT CARD -->
+            </div>
+            <!-- / CENTER -->
+        </div>
+
+    </div>
+</div>

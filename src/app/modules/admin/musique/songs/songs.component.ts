@@ -1,3 +1,4 @@
+import { DataSource } from '@angular/cdk/collections';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,53 +7,77 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { AlbumService } from 'app/modules/services/album.service';
-import { ArtisteService } from 'app/modules/services/artiste.service';
 import { ImportSongService } from 'app/modules/services/import-song.service';
 import { DeleteConfirmationComponent } from 'app/modules/widgets/delete-confirmation/delete-confirmation.component';
 //import { FuseUtils } from '@fuse/utils';
 import { environment } from 'environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { AddArtisteComponent } from './add-artiste/add-artiste.component';
+import { BehaviorSubject, fromEvent, merge, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
+import { Song } from '../../modal/song';
+//import { AddAlbumComponent } from '../../album/add-album/add-album.component';
+import { AddSongsComponent } from '../add-songs/add-songs.component';
 
 @Component({
-  selector: 'app-artiste',
-  templateUrl: './artiste.component.html',
-  styleUrls: ['./artiste.component.scss']
+    selector: 'e-commerce-products',
+    templateUrl: './songs.component.html',
+    styleUrls: ['./songs.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations
 })
-export class ArtisteComponent implements OnInit {
+export class SongsComponent implements OnInit, AfterViewInit {
 
-
-    displayedColumns = ['img', 'biographie', 'nom','action'];
+    dataSource;
+    displayedSongColumns = ['img', 'titre', 'artiste', 'prix', 'categorie', 'like', 'action'];
     songUrl = environment.apiUrl;
 
-    @ViewChild('paginator', { static: true }) paginatorSong: MatPaginator;
+    @ViewChild('paginatorSong', { static: true }) paginatorSong: MatPaginator;
 
     @ViewChild(MatSort, { static: true })
     sort: MatSort;
 
     @ViewChild('filter', { static: true })
     filter: ElementRef;
-    dataArtiste;
-    artiste = new MatTableDataSource<any>();
-    constructor(private artisteService: ArtisteService,
+    dataSong;
+    dataAlbum;
+    songs = new MatTableDataSource<any>();
+    albums = new MatTableDataSource<any>();
+    // Private
+    private _unsubscribeAll: Subject<any>;
+
+    constructor(
         private dialogRef: MatDialog,
         private service: ImportSongService,
         private AlbumService: AlbumService,
-        private toastr: ToastrService) { }
-
-    ngOnInit(): void {
+        private toastr: ToastrService
+    ) {
+        // Set the private defaults
+        this._unsubscribeAll = new Subject();
     }
+    ngAfterViewInit(): void {
+        this.songs.paginator = this.paginatorSong
 
-    getArtiste(){
-        this.artisteService.getArtiste().subscribe((res) => {
-            this.dataArtiste = res?.data
-            this.artiste.data = res?.data
+    }
+    ngOnInit(): void {
+        this.getSongs();
+    }
+    getSongs() {
+        this.service.getSongs().subscribe((res) => {
+            console.log(res);
+            this.dataSong = res?.data
+            this.songs.data = res?.data;
+        });
+    }
+    getAlbums() {
+        this.AlbumService.getAlbum().subscribe((res) => {
+            this.dataAlbum = res?.data
+            this.albums.data = res?.data
         })
     }
 
-    add(type, song, i): void {
+    addSong(type, song, i): void {
         if (type == 'new') {
-            let dialog = this.dialogRef.open(AddArtisteComponent, {
+            let dialog = this.dialogRef.open(AddSongsComponent, {
                 panelClass: 'contact-form-dialog',
                 data: {
                     action: 'new'
@@ -64,16 +89,16 @@ export class ArtisteComponent implements OnInit {
                 .subscribe((res) => {
                     if (res)
                 {
-                    this.dataArtiste.unshift(res)
-                    this.artiste.data = this.dataArtiste;
-                    this.toastr.success("Artiste ajouté")
+                    this.dataSong.unshift(res)
+                    this.songs.data = this.dataSong;
+                    this.toastr.success("La music a été ajouté avec succès")
                 }
                 if(res == false){
                     this.toastr.error('Désolé une erreur est survenue.')
                 }
                 });
         } else {
-            let dialog = this.dialogRef.open(AddArtisteComponent, {
+            let dialog = this.dialogRef.open(AddSongsComponent, {
                 panelClass: 'contact-form-dialog',
                 data: {
                     action: 'edit',
@@ -85,10 +110,11 @@ export class ArtisteComponent implements OnInit {
             dialog.afterClosed()
                 .subscribe((response) => {
                     if (response) {
-                        this.dataArtiste.splice(i, 1, response)
-                        this.artiste.data = this.dataArtiste
+                        console.log(this.dataSong);
+                        this.dataSong.splice(i, 1, response)
+                        this.songs.data = this.dataSong
                         //this.musics = new MatTableDataSource(this.data)
-                        this.toastr.success("Artiste modifié")
+                        this.toastr.success("La music a été modifié avec succès")
                     }
                     if (response == false) {
                         this.toastr.error('Désolé une erreur est survenue.')
@@ -99,7 +125,7 @@ export class ArtisteComponent implements OnInit {
 
     }
 
-    delete(id, i){
+    deleteSong(id, i){
         let dialog = this.dialogRef.open(DeleteConfirmationComponent, {
             panelClass: 'contact-form-dialog',
             height: '80%',
@@ -110,8 +136,8 @@ export class ArtisteComponent implements OnInit {
                 if (response) {
                     this.service.deleteSong(id).subscribe(
                         (res) => {
-                            this.dataArtiste.splice(i, 1)
-                            this.artiste.data = this.dataArtiste
+                            this.dataSong.splice(i, 1)
+                            this.songs.data = this.dataSong
                             //this.musics = new MatTableDataSource(this.data)
                             this.toastr.success("La music a été modifié avec succès")
                         }
@@ -124,4 +150,16 @@ export class ArtisteComponent implements OnInit {
             });
     }
 
+
+
+
+
+
+
 }
+
+
+
+
+
+

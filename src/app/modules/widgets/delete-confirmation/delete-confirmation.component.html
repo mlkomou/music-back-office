@@ -1,0 +1,20 @@
+<div mat-dialog-title class="dialog-content-wrapper">
+  <div class="flex mb-3">
+    <div class=" text-xl flex-grow"></div>
+    <button  (click)="matDialogRef.close()" class="ml-auto text-xl" aria-label="Close dialog">
+      x
+    </button>
+  </div>
+
+</div>
+<div mat-dialog-content class="text-center">
+  Êtes-vous sûr de vouloir <br> supprimer ?
+</div>
+<div mat-dialog-actions class="flex justify-around mt-3">
+    <button (click)="matDialogRef.close(true)"  class="bg-red-600 hover:bg-red-900 text-white  py-2 px-4 rounded-2xl"  >
+      Supprimer
+    </button>
+    <button  (click)="matDialogRef.close(false)" class="bg-green-600 hover:bg-green-900 text-white py-2 px-4 rounded-2xl"  >
+      Annuler
+    </button>
+  </div>

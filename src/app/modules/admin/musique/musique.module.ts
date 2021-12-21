@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ArtisteComponent } from './artiste.component';
-import {Route, RouterModule} from "@angular/router";
+import { MusiqueOrderComponent } from './musique-order/musique-order.component';
+import { MusiqueOrdersComponent } from './musique-orders/musique-orders.component';
+import { SongComponent } from './song/song.component';
+import { SongsComponent } from './songs/songs.component';
+
+//import { AgmCoreModule } from '@agm/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
@@ -15,6 +19,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Routes, RouterModule } from '@angular/router';
+
+import { AddSongsComponent } from './add-songs/add-songs.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -24,25 +31,53 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ImportSongService } from 'app/modules/services/import-song.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AlbumService } from 'app/modules/services/album.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { ArtisteService } from 'app/modules/services/artiste.service';
-import { AddArtisteComponent } from './add-artiste/add-artiste.component';
+import { DeleteConfirmationComponent } from 'app/modules/widgets/delete-confirmation/delete-confirmation.component';
 
-const exampleRoutes: Route[] = [
+const routes: Routes = [
     {
         path     : '',
-        component: ArtisteComponent
+        component: SongsComponent,
+
+    },
+    {
+        path     : 'add-song',
+        component: AddSongsComponent,
+
+    },
+    {
+        path     : 'products/:id',
+        component: SongComponent,
+
+    },
+    {
+        path     : 'products/:id/:handle',
+        component: SongComponent,
+
+    },
+    {
+        path     : 'orders',
+        component: MusiqueOrderComponent,
+
+    },
+    {
+        path     : 'orders/:id',
+        component: MusiqueOrderComponent,
+
     }
 ];
 
 @NgModule({
   declarations: [
-    ArtisteComponent,
-    AddArtisteComponent
-  ],
+    MusiqueOrdersComponent,
+    SongComponent,
+    SongsComponent,
+    AddSongsComponent,
+    DeleteConfirmationComponent
+    ],
   imports: [
-    CommonModule,
-    RouterModule.forChild(exampleRoutes),
+    RouterModule.forChild(routes),
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -67,9 +102,10 @@ const exampleRoutes: Route[] = [
     MatDatepickerModule,
     MatMenuModule,
     MatDialogModule
+
   ],
-  providers:[
-    ToastrService, ArtisteService
-  ]
+  providers   : [
+    ImportSongService, AlbumService, ToastrService
+]
 })
-export class ArtisteModule { }
+export class MusiqueModule { }
